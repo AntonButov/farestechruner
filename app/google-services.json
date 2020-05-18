@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "414693044417",
+    "firebase_url": "https://farestech2.firebaseio.com",
+    "project_id": "farestech2",
+    "storage_bucket": "farestech2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414693044417:android:229bd5d38b122d73dae440",
+        "android_client_info": {
+          "package_name": "pro.butovanton.farestech2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "414693044417-alqtfhn3vtc8rf75bei5tvude8vdung0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1kSJ9Stef3v5r7eqTd26ayqU5i75nxVM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "414693044417-alqtfhn3vtc8rf75bei5tvude8vdung0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
