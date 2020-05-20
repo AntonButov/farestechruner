@@ -1,4 +1,4 @@
-package pro.butovanton.farestech_runer;
+package pro.butovanton.farestechruner;
 
 import android.Manifest;
 import android.app.Application;
@@ -11,11 +11,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.ViewModel;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-class FViewModel extends AndroidViewModel {
+public class FViewModel extends AndroidViewModel {
 
     private Application application;
     private LocationManager locationManager;

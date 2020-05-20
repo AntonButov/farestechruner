@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "414693044417",
-    "firebase_url": "https://farestech2.firebaseio.com",
-    "project_id": "farestech2",
-    "storage_bucket": "farestech2.appspot.com"
+    "project_number": "892322331365",
+    "firebase_url": "https://farestech-91e7e.firebaseio.com",
+    "project_id": "farestech-91e7e",
+    "storage_bucket": "farestech-91e7e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:414693044417:android:229bd5d38b122d73dae440",
+        "mobilesdk_app_id": "1:892322331365:android:fdfa6fc9b7e34ef8daf20c",
         "android_client_info": {
-          "package_name": "pro.butovanton.farestech_runer"
+          "package_name": "pro.butovanton.farestechruner"
         }
       },
       "oauth_client": [
         {
-          "client_id": "414693044417-alqtfhn3vtc8rf75bei5tvude8vdung0.apps.googleusercontent.com",
+          "client_id": "892322331365-2kahhsmpv6gu6jts9rfqt91bk43v5epk.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB1kSJ9Stef3v5r7eqTd26ayqU5i75nxVM"
+          "current_key": "AIzaSyDT4B3gYe38YYiV2Vck7Ds1r48hvMfaui4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "414693044417-alqtfhn3vtc8rf75bei5tvude8vdung0.apps.googleusercontent.com",
+              "client_id": "892322331365-2kahhsmpv6gu6jts9rfqt91bk43v5epk.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

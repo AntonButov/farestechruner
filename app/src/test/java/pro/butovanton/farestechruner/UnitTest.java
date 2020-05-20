@@ -1,4 +1,4 @@
-package pro.butovanton.farestech_runer;
+package pro.butovanton.farestechruner;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
