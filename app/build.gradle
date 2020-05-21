@@ -39,4 +39,5 @@ dependencies {
    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'com.google.firebase:firebase-database:19.3.0'
 }

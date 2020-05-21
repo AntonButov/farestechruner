@@ -3,12 +3,14 @@ package pro.butovanton.farestechruner;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -20,15 +22,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     final int MY_PERMISSIONS_LOCATION_REQUEST = 101;
-    final String TAG = "DEBUG";
     final int RC_SIGN_IN = 100;
     FirebaseAuth firebaseAuth;
     FViewModel viewModel;
+    private TextView textViewLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     firebaseAuth = FirebaseAuth.getInstance();
     viewModel = new ViewModelProvider(MainActivity.this).get(FViewModel.class);
-
+    textViewLocation = findViewById(R.id.textViewLoc);
     }
 
     @SuppressLint("MissingPermission")
@@ -56,7 +59,12 @@ public class MainActivity extends AppCompatActivity {
             startLocationPermissionRequest();
         } else
 
-            ;
+            viewModel.startListener(user.getPhoneNumber()).observe(this, new Observer<String>() {
+                @Override
+                public void onChanged(String location) {
+                    textViewLocation.setText(location);
+                }
+            });
 
             }
 
@@ -81,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Log.d("DEBUG", "onResultOk user " + user);
+                Log.d(viewModel.TAG, "onResultOk user " + user);
                 // ...
             } else {
                 // Sign in failed. If response is null the user canceled the
@@ -111,12 +119,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        Log.i(TAG, "onRequestPermissionResult");
+        Log.i(viewModel.TAG, "onRequestPermissionResult");
         if (requestCode == MY_PERMISSIONS_LOCATION_REQUEST) {
             if (grantResults.length <= 0) {
                 // If user interaction was interrupted, the permission request is cancelled and you
                 // receive empty arrays.
-                Log.i(TAG, "User interaction was cancelled.");
+                Log.i(viewModel.TAG, "User interaction was cancelled.");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission granted.
     //            getLastLocation();
