@@ -34,6 +34,7 @@ public class FViewModel extends AndroidViewModel {
     public LiveData<String> startListener(final String user) {
 
         this.user = user;
+        /*
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -43,6 +44,11 @@ public class FViewModel extends AndroidViewModel {
                 getApplication().startService(intent);
             }
         },0, TIMER_INTERVAL);
+
+         */
+        Intent intent = new Intent(getApplication(), ServiceLocation.class);
+        intent.putExtra("user", user);
+        getApplication().startService(intent);
         return locationMutableLiveData;
     }
 

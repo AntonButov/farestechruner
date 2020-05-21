@@ -1,7 +1,12 @@
 package pro.butovanton.farestechruner;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -10,6 +15,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -17,6 +24,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class ServiceLocation extends Service {
+
+    private String info = "Запись включена.";
 
     private DatabaseReference myRef;
     private LocationManager locationManager;
@@ -33,6 +42,8 @@ public class ServiceLocation extends Service {
     @SuppressLint("MissingPermission")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        startForeground(101, updateNotification());
+
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         this.myRef = database.getReference("farestech");
@@ -102,5 +113,41 @@ public class ServiceLocation extends Service {
         DateFormat formatter = new SimpleDateFormat("hh:mm dd:MM:yy");
         String timeFormat = formatter.format(time);
         return timeFormat;
+    }
+
+    private Notification updateNotification() {
+
+        Context context = getApplicationContext();
+
+        PendingIntent action = PendingIntent.getActivity(context,
+                0, new Intent(context, MainActivity.class),
+                PendingIntent.FLAG_CANCEL_CURRENT); // Flag indicating that if the described PendingIntent already exists, the current one should be canceled before generating a new one.
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+            String CHANNEL_ID = "alex_channel";
+
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "AlexChannel",
+                    NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("Alex channel description");
+            manager.createNotificationChannel(channel);
+
+            builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        }
+        else
+        {
+            builder = new NotificationCompat.Builder(context);
+        }
+
+        return builder.setContentIntent(action)
+                .setContentTitle(info)
+                .setTicker(info)
+                .setContentText(info)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentIntent(action)
+                .setOngoing(true).build();
     }
 }
