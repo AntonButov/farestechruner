@@ -82,12 +82,7 @@ public class MainActivity extends AppCompatActivity {
             startLocationPermissionRequest();
         } else
 
-            viewModel.startListener(user.getPhoneNumber()).observe(this, new Observer<String>() {
-                @Override
-                public void onChanged(String location) {
-                    textViewLocation.setText(location);
-                }
-            });
+            viewModel.starStopService(user.getPhoneNumber());
 
             }
 

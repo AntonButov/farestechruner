@@ -22,7 +22,6 @@ public class Report {
     }
 
     void outLocation(Location location) {
-        //       locationMutableLiveData.setValue(locationToString(location));
         Log.d("DEBUG", locationToString(location));
         myRef.child(user)
                 .child(timeToString(location.getTime()))
@@ -50,7 +49,7 @@ public class Report {
 
     String locationToString(Location location) {
         return String.format("Coordinates: lat = %1$.4f, lon = %2$.4f", location.getLatitude(), location.getLongitude()) + " "
-                + timeToString(location.getTime());
+                + timeToString(location.getTime()) + " provider:" + location.getProvider();
 
     }
 

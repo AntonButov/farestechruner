@@ -18,46 +18,35 @@ import java.util.TimerTask;
 
 public class FViewModel extends AndroidViewModel {
 
-    private final int TIMER_INTERVAL = 60 * 1 * 1000;
+    private Application application;
 
     final public static String TAG = "DEBUG";
-    Timer timer = new Timer();
 
    private LocationFinder locationFinder;
-   private MutableLiveData<String> locationMutableLiveData = new MutableLiveData<>();
-    private String user;
 
     public FViewModel(@NonNull Application application) {
         super(application);
-    locationFinder = new LocationFinder(application);
-
+    //locationFinder = new LocationFinder(application);
+    this.application = application;
     }
 
-    public LiveData<String> startListener(final String user) {
-
-        this.user = user;
-        /*
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(getApplication(), ServiceLocation.class);
-                intent.putExtra("user", user);
-                getApplication().startService(intent);
-            }
-        },0, TIMER_INTERVAL);
-
-         */
+    public Boolean starStopService(final String user) {
+        Intent intent = new Intent(getApplication(), ServiceLocation.class);
         if (!isMyServiceRunning(ServiceLocation.class)) {
-            Intent intent = new Intent(getApplication(), ServiceLocation.class);
+
             intent.putExtra("user", user);
-            getApplication().startService(intent);
+            application.startService(intent);
+            return true;
         }
-        return locationMutableLiveData;
+        else {
+            application.stopService(intent);
+        }
+
+        return false;
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getApplication().getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager manager = (ActivityManager) application.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
                 return true;

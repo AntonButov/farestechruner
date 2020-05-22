@@ -64,15 +64,17 @@ public class ServiceLocation extends Service {
     @SuppressLint("MissingPermission")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        user = intent.getStringExtra("user");
-        if (report == null) report = new Report(user);
-        startForeground(101, updateNotification());
+            user = intent.getStringExtra("user");
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                60 * 1000 * 5, 10, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                60 * 1000 * 5, 10, locationListener);
-        return START_NOT_STICKY;
+            if (report == null) report = new Report(user);
+            startForeground(101, updateNotification());
+
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    60 * 1000 * 5, 10, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    60 * 1000 * 5, 10, locationListener);
+
+    return START_NOT_STICKY;
     }
 
     LocationListener locationListener = new LocationListener() {
@@ -130,8 +132,8 @@ public class ServiceLocation extends Service {
         return builder.setContentIntent(action)
                 .setContentTitle(info)
                 .setTicker(info)
-                .setContentText(info)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+             //   .setContentText(info)
+                .setSmallIcon(R.drawable.fui_ic_check_circle_black_128dp)
                 .setContentIntent(action)
                 .setOngoing(true).build();
     }
