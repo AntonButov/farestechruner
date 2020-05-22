@@ -22,16 +22,38 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ServiceLocation extends Service {
 
+    private Report report;
+
+    private final int TIMER_DELLAY = 60 * 1000 * 20;
     private String info = "Запись включена.";
 
-    private DatabaseReference myRef;
     private LocationManager locationManager;
     private String user;
 
     public ServiceLocation() {
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onCreate() {
+
+        super.onCreate();
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                report.outLocation(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+                report.outLocation(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+            }
+        },10000,TIMER_DELLAY);
+
     }
 
     @Override
@@ -42,23 +64,21 @@ public class ServiceLocation extends Service {
     @SuppressLint("MissingPermission")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        user = intent.getStringExtra("user");
+        if (report == null) report = new Report(user);
         startForeground(101, updateNotification());
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        this.myRef = database.getReference("farestech");
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                1000 * 1, 1, locationListener);
+                60 * 1000 * 5, 10, locationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                1000 * 1, 1, locationListener);
-        user = intent.getStringExtra("user");
+                60 * 1000 * 5, 10, locationListener);
         return START_NOT_STICKY;
     }
 
     LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            outLocation(location);
+           report.outLocation(location);
         }
 
         @Override
@@ -71,7 +91,7 @@ public class ServiceLocation extends Service {
             @SuppressLint("MissingPermission")
             Location location = locationManager.getLastKnownLocation(provider);
             if (location != null)
-                outLocation(location);
+                report.outLocation(location);
         }
 
         @Override
@@ -79,41 +99,6 @@ public class ServiceLocation extends Service {
 
         }
     };
-
-    void outLocation(Location location) {
- //       locationMutableLiveData.setValue(locationToString(location));
-        Log.d("DEBUG", locationToString(location));
-        myRef.child(user)
-                .child(timeToString(location.getTime()))
-                .child("lat")
-                .setValue(location.getLatitude());
-        myRef.child(user)
-                .child(timeToString(location.getTime()))
-                .child("lon")
-                .setValue(location.getLatitude());
- /*       myRef.child(user)
-                .child("lat")
-                .setValue(location.getLatitude());
-        myRef.child(user)
-                .child("lon")
-                .setValue(location.getLatitude());
-        myRef.child(user)
-                .child("time")
-                .child(timeToString(location.getTime()));
-*/
-    }
-
-    String locationToString(Location location) {
-        return String.format("Coordinates: lat = %1$.4f, lon = %2$.4f", location.getLatitude(), location.getLongitude()) + " "
-                + timeToString(location.getTime());
-
-    }
-
-    String timeToString(Long time) {
-        DateFormat formatter = new SimpleDateFormat("hh:mm dd:MM:yy");
-        String timeFormat = formatter.format(time);
-        return timeFormat;
-    }
 
     private Notification updateNotification() {
 
@@ -128,11 +113,11 @@ public class ServiceLocation extends Service {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
-            String CHANNEL_ID = "alex_channel";
+            String CHANNEL_ID = "Farestech_channel";
 
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "AlexChannel",
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Farestech",
                     NotificationManager.IMPORTANCE_HIGH);
-            channel.setDescription("Alex channel description");
+            channel.setDescription("Farestech channel description");
             manager.createNotificationChannel(channel);
 
             builder = new NotificationCompat.Builder(this, CHANNEL_ID);

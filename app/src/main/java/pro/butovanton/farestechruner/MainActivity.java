@@ -8,12 +8,18 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -28,6 +34,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     final int MY_PERMISSIONS_LOCATION_REQUEST = 101;
+    final int MY_IGNORE_OPTIMIZATION_REQUEST = 102;
     final int RC_SIGN_IN = 100;
     FirebaseAuth firebaseAuth;
     FViewModel viewModel;
@@ -41,6 +48,22 @@ public class MainActivity extends AppCompatActivity {
     firebaseAuth = FirebaseAuth.getInstance();
     viewModel = new ViewModelProvider(MainActivity.this).get(FViewModel.class);
     textViewLocation = findViewById(R.id.textViewLoc);
+
+        PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+        boolean isIgnoringBatteryOptimizations = false;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            if (pm != null) {
+                isIgnoringBatteryOptimizations = pm.isIgnoringBatteryOptimizations(getPackageName());
+            }
+            if(!isIgnoringBatteryOptimizations){
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, MY_IGNORE_OPTIMIZATION_REQUEST);
+            }else {
+                Toast.makeText(getApplicationContext(), "power allowed", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -99,6 +122,21 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        if (requestCode == MY_IGNORE_OPTIMIZATION_REQUEST) {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            boolean isIgnoringBatteryOptimizations = false;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (pm != null) {
+                    isIgnoringBatteryOptimizations = pm.isIgnoringBatteryOptimizations(getPackageName());
+                }
+                if (isIgnoringBatteryOptimizations) {
+                    Toast.makeText(getApplicationContext(), "power allowed", Toast.LENGTH_LONG).show();
+                } else {
+                    // Not ignoring battery optimization
+                }
+            }
+
+        }
     }
 
     private boolean checkPermissions() {
@@ -133,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 
 }
 
