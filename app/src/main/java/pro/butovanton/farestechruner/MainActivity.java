@@ -18,6 +18,8 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,16 +40,25 @@ public class MainActivity extends AppCompatActivity {
     final int RC_SIGN_IN = 100;
     FirebaseAuth firebaseAuth;
     FViewModel viewModel;
-    private TextView textViewLocation;
+    private Button buttonRun;
+    private TextView textViewUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+    textViewUser = findViewById(R.id.textViewUser);
     firebaseAuth = FirebaseAuth.getInstance();
     viewModel = new ViewModelProvider(MainActivity.this).get(FViewModel.class);
-    textViewLocation = findViewById(R.id.textViewLoc);
+    buttonRun = findViewById(R.id.buttonRun);
+    buttonRun.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            buttonRunClick();
+        }
+    });
+
 
         PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
         boolean isIgnoringBatteryOptimizations = false;
@@ -74,17 +85,28 @@ public class MainActivity extends AppCompatActivity {
         if (user == null)
             startPhone();
         else {
-            TextView textViewUser = findViewById(R.id.textViewUser);
             textViewUser.setText("Пользователь: " + user.getPhoneNumber());
         }
 
         if (!checkPermissions()) {
             startLocationPermissionRequest();
+            buttonRun.setEnabled(false);
         } else
+            buttonRun.setEnabled(true);
 
-            viewModel.starStopService(user.getPhoneNumber());
+        setButtonRun(viewModel.getServiceStatus());
+   }
 
-            }
+   void buttonRunClick() {
+       FirebaseUser user = firebaseAuth.getCurrentUser();
+       if (user != null)
+           setButtonRun(viewModel.starStopService(user.getPhoneNumber()));
+   }
+
+    void setButtonRun(Boolean start) {
+    if (start) buttonRun.setText(R.string.run);
+    else buttonRun.setText(R.string.stop);
+    }
 
     void startPhone() {
         List<AuthUI.IdpConfig> providers = Arrays.asList(

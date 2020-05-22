@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">farestechruner</string>
+    <string name="run">Работает.</string>
+    <string name="stop">Не работает.</string>
 </resources>

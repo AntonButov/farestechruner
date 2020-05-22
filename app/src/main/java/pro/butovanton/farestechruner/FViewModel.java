@@ -45,6 +45,10 @@ public class FViewModel extends AndroidViewModel {
         return false;
     }
 
+    public Boolean getServiceStatus() {
+        return isMyServiceRunning(ServiceLocation.class);
+    }
+
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) application.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
