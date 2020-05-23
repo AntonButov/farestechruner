@@ -23,28 +23,40 @@ public class Report {
 
     void outLocation(Location location) {
         Log.d("DEBUG", locationToString(location));
+        /*
         myRef.child(user)
+                .child("history")
+                .child(location.getProvider())
                 .child(timeToString(location.getTime()))
                 .child("lat")
                 .setValue(location.getLatitude());
         myRef.child(user)
+                .child("history")
+                .child(location.getProvider())
                 .child(timeToString(location.getTime()))
                 .child("lon")
                 .setValue(location.getLongitude());
+*/
         myRef.child(user)
-                .child(timeToString(location.getTime()))
-                .child("provider")
-                .setValue(location.getProvider());
- /*       myRef.child(user)
+                .child("now")
+                .child(location.getProvider())
                 .child("lat")
                 .setValue(location.getLatitude());
         myRef.child(user)
+                .child("now")
+                .child(location.getProvider())
                 .child("lon")
-                .setValue(location.getLatitude());
+                .setValue(location.getLongitude());
         myRef.child(user)
+                .child("now")
+                .child(location.getProvider())
+                .child("timeStr")
+                .setValue(timeToString(location.getTime()));
+        myRef.child(user)
+                .child("now")
+                .child(location.getProvider())
                 .child("time")
-                .child(timeToString(location.getTime()));
-*/
+                .setValue(location.getTime());
     }
 
     String locationToString(Location location) {

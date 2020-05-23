@@ -30,7 +30,7 @@ public class ServiceLocation extends Service {
     private Report report;
 
     private final int TIMER_DELLAY = 60 * 1000 * 20;
-    private String info = "Запись включена.";
+    private String info;
 
     private LocationManager locationManager;
     private String user;
@@ -105,6 +105,7 @@ public class ServiceLocation extends Service {
     private Notification updateNotification() {
 
         Context context = getApplicationContext();
+        info = context.getResources().getString(R.string.notification);
 
         PendingIntent action = PendingIntent.getActivity(context,
                 0, new Intent(context, MainActivity.class),

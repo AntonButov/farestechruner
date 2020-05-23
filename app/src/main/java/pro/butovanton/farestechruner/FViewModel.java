@@ -10,11 +10,6 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class FViewModel extends AndroidViewModel {
 
@@ -22,11 +17,8 @@ public class FViewModel extends AndroidViewModel {
 
     final public static String TAG = "DEBUG";
 
-   private LocationFinder locationFinder;
-
     public FViewModel(@NonNull Application application) {
         super(application);
-    //locationFinder = new LocationFinder(application);
     this.application = application;
     }
 
@@ -38,9 +30,8 @@ public class FViewModel extends AndroidViewModel {
             application.startService(intent);
             return true;
         }
-        else {
+        else
             application.stopService(intent);
-        }
 
         return false;
     }
