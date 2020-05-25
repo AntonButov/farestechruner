@@ -27,13 +27,7 @@ import java.util.TimerTask;
 
 public class ServiceLocation extends Service {
 
-    private Report report;
-
-    private final int TIMER_DELLAY = 60 * 1000 * 20;
     private String info;
-
-    private LocationManager locationManager;
-    private Timer timer;
     private String user;
 
     public ServiceLocation() {
@@ -49,65 +43,11 @@ public class ServiceLocation extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
     user = intent.getStringExtra("user");
-    if (report == null) report = new Report(user);
+    new LocationFinder(getApplicationContext(), user);
 
     startForeground(101, updateNotification());
-
-    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-    addLocationListener();
-
     return START_NOT_STICKY;
     }
-
-    @SuppressLint("MissingPermission")
-    private void addLocationListener() {
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                60 * 1000 * 5, 10, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                60 * 1000 * 5, 10, locationListener);
-
-        if (timer != null)
-            timer = createTimer();
-    }
-
-    @SuppressLint("MissingPermission")
-    private Timer createTimer() {
-        Timer timer =  new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                report.outLocation(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
-                report.outLocation(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
-            }
-        }, 10000, TIMER_DELLAY);
-        return timer;
-    }
-
-    LocationListener locationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-            if (location != null)
-              report.outLocation(location);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            Log.d("DEBUG", "onStatusChanged");
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-            @SuppressLint("MissingPermission")
-            Location location = locationManager.getLastKnownLocation(provider);
-            if (location != null)
-                report.outLocation(location);
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-    };
 
     private Notification updateNotification() {
 
@@ -133,14 +73,11 @@ public class ServiceLocation extends Service {
             builder = new NotificationCompat.Builder(this, CHANNEL_ID);
         }
         else
-        {
             builder = new NotificationCompat.Builder(context);
-        }
 
         return builder.setContentIntent(action)
                 .setContentTitle(info)
                 .setTicker(info)
-             //   .setContentText(info)
                 .setSmallIcon(R.drawable.fui_ic_check_circle_black_128dp)
                 .setContentIntent(action)
                 .setOngoing(true).build();

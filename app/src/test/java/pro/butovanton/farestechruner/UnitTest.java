@@ -5,6 +5,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
 
@@ -21,5 +23,9 @@ public class UnitTest {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser user = firebaseAuth.getCurrentUser();
         assertNotNull(user);
+    }
+
+    @RunWith(MockitoJUnitRunner.class)
+    public static class TestService {
     }
 }

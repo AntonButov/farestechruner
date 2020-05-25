@@ -2,6 +2,7 @@ package pro.butovanton.farestechruner;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -13,34 +14,54 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.content.Context.LOCATION_SERVICE;
 
 public class LocationFinder {
 
-    private DatabaseReference myRef;
+    private final int TIMER_DELLAY = 60 * 1000 * 20;
     private LocationManager locationManager;
-    private String user;
+    private Timer timer;
+    private Report report;
 
-   public LocationFinder(Application application) {
-       locationManager = (LocationManager) application.getSystemService(LOCATION_SERVICE);
-       FirebaseDatabase database = FirebaseDatabase.getInstance();
-       this.myRef = database.getReference("farestech");
-   }
 
-   @SuppressLint("MissingPermission")
-   public void getLocation(String user) {
-       this.user = user;
-       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-               1000 * 10, 10, locationListener);
-       locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-               1000 * 10, 10, locationListener);
-   }
+    public LocationFinder(Context context, String user) {
+        report = new Report(user);
+        locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+        addLocationListener();
+    }
+
+    @SuppressLint("MissingPermission")
+    private void addLocationListener() {
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                60 * 1000 * 5, 10, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                60 * 1000 * 5, 10, locationListener);
+
+        if (timer != null)
+            timer = createTimer();
+    }
+
+    @SuppressLint("MissingPermission")
+    private Timer createTimer() {
+        Timer timer =  new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                report.outLocation(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+                report.outLocation(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+            }
+        }, 10000, TIMER_DELLAY);
+        return timer;
+    }
 
     LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            outLocation(location);
+            if (location != null)
+                report.outLocation(location);
         }
 
         @Override
@@ -53,7 +74,7 @@ public class LocationFinder {
             @SuppressLint("MissingPermission")
             Location location = locationManager.getLastKnownLocation(provider);
             if (location != null)
-                outLocation(location);
+                report.outLocation(location);
         }
 
         @Override
@@ -61,43 +82,4 @@ public class LocationFinder {
 
         }
     };
-
-    void outLocation(Location location) {
-        //       locationMutableLiveData.setValue(locationToString(location));
-        Log.d("DEBUG", locationToString(location));
-        myRef.child(user)
-                .child(timeToString(location.getTime()))
-                .child("lat")
-                .setValue(location.getLatitude());
-        myRef.child(user)
-                .child(timeToString(location.getTime()))
-                .child("lon")
-                .setValue(location.getLatitude());
- /*       myRef.child(user)
-                .child("lat")
-                .setValue(location.getLatitude());
-        myRef.child(user)
-                .child("lon")
-                .setValue(location.getLatitude());
-        myRef.child(user)
-                .child("time")
-                .child(timeToString(location.getTime()));
-*/
-    }
-
-    String locationToString(Location location) {
-        return String.format("Coordinates: lat = %1$.4f, lon = %2$.4f", location.getLatitude(), location.getLongitude()) + " "
-                + timeToString(location.getTime());
-
-    }
-
-    String timeToString(Long time) {
-        DateFormat formatter = new SimpleDateFormat("hh:mm dd:MM:yy");
-        String timeFormat = formatter.format(time);
-        return timeFormat;
-    }
-
-    public void onDestroy() {
-        locationManager.removeUpdates(locationListener);
-    }
 }
