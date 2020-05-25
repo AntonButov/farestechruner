@@ -20,12 +20,9 @@ public class UnitTest {
 
     @Test
     public void testUser() {
+
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser user = firebaseAuth.getCurrentUser();
         assertNotNull(user);
-    }
-
-    @RunWith(MockitoJUnitRunner.class)
-    public static class TestService {
     }
 }

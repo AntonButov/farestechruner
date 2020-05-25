@@ -13,21 +13,28 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestMock {
 
     @Mock
-    Application mockContext;
+    FViewModel viewModel;
+
+    private Boolean run;
 
     @Test
     public void VieModelStartStop() {
-        FViewModel viewModel = new FViewModel(mockContext);
+        run = false;
+        when(viewModel.getServiceStatus()).thenReturn(run);
         String testNumber = "+79281247777";
         assertFalse( viewModel.getServiceStatus());
         //     assertTrue(viewModel.getServiceStatus());
         viewModel.starStopService(testNumber);
-        //     assertFalse(viewModel.getServiceStatus());
+        run = true;
+        when(viewModel.getServiceStatus()).thenReturn(run);
+        assertTrue(viewModel.getServiceStatus());
     }
 
 }
