@@ -33,27 +33,10 @@ public class ServiceLocation extends Service {
     private String info;
 
     private LocationManager locationManager;
+    private Timer timer;
     private String user;
 
     public ServiceLocation() {
-    }
-
-    @SuppressLint("MissingPermission")
-    @Override
-    public void onCreate() {
-
-        super.onCreate();
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-
-            @Override
-            public void run() {
-                report.outLocation(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
-                report.outLocation(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
-            }
-        },10000,TIMER_DELLAY);
-
     }
 
     @Override
@@ -64,23 +47,47 @@ public class ServiceLocation extends Service {
     @SuppressLint("MissingPermission")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-            user = intent.getStringExtra("user");
 
-            if (report == null) report = new Report(user);
-            startForeground(101, updateNotification());
+    user = intent.getStringExtra("user");
+    if (report == null) report = new Report(user);
 
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    60 * 1000 * 5, 10, locationListener);
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    60 * 1000 * 5, 10, locationListener);
+    startForeground(101, updateNotification());
+
+    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+    addLocationListener();
 
     return START_NOT_STICKY;
+    }
+
+    @SuppressLint("MissingPermission")
+    private void addLocationListener() {
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                60 * 1000 * 5, 10, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                60 * 1000 * 5, 10, locationListener);
+
+        if (timer != null)
+            timer = createTimer();
+    }
+
+    @SuppressLint("MissingPermission")
+    private Timer createTimer() {
+        Timer timer =  new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                report.outLocation(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+                report.outLocation(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+            }
+        }, 10000, TIMER_DELLAY);
+        return timer;
     }
 
     LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-           report.outLocation(location);
+            if (location != null)
+              report.outLocation(location);
         }
 
         @Override

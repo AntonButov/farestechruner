@@ -22,7 +22,8 @@ public class Report {
     }
 
     void outLocation(Location location) {
-        Log.d("DEBUG", locationToString(location));
+        if (location != null) {
+            Log.d("DEBUG", locationToString(location));
         /*
         myRef.child(user)
                 .child("history")
@@ -37,26 +38,27 @@ public class Report {
                 .child("lon")
                 .setValue(location.getLongitude());
 */
-        myRef.child(user)
-                .child("now")
-                .child(location.getProvider())
-                .child("lat")
-                .setValue(location.getLatitude());
-        myRef.child(user)
-                .child("now")
-                .child(location.getProvider())
-                .child("lon")
-                .setValue(location.getLongitude());
-        myRef.child(user)
-                .child("now")
-                .child(location.getProvider())
-                .child("timeStr")
-                .setValue(timeToString(location.getTime()));
-        myRef.child(user)
-                .child("now")
-                .child(location.getProvider())
-                .child("time")
-                .setValue(location.getTime());
+            myRef.child(user)
+                    .child("now")
+                    .child(location.getProvider())
+                    .child("lat")
+                    .setValue(location.getLatitude());
+            myRef.child(user)
+                    .child("now")
+                    .child(location.getProvider())
+                    .child("lon")
+                    .setValue(location.getLongitude());
+            myRef.child(user)
+                    .child("now")
+                    .child(location.getProvider())
+                    .child("timeStr")
+                    .setValue(timeToString(location.getTime()));
+            myRef.child(user)
+                    .child("now")
+                    .child(location.getProvider())
+                    .child("time")
+                    .setValue(location.getTime());
+        }
     }
 
     String locationToString(Location location) {
